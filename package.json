@@ -6,13 +6,22 @@
   "author": "enoch <enochlau@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "tsnd --respawn --clear --transpile-only -r source-map-support/register -r tsconfig-paths/register src/server.ts"
+    "dev": "tsnd --respawn --clear --transpile-only -r source-map-support/register -r tsconfig-paths/register src/server.ts",
+    "start": "yarn build && node dist/src/server.js",
+    "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
+    "test": "jest --verbose",
+    "test:watch": "jest --watch",
+    "migrate:list": "knex migrate:list",
+    "migrate:latest": "knex migrate:latest"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "knex": "^2.3.0"
+    "humps": "^2.0.1",
+    "knex": "^2.3.0",
+    "lodash": "^4.17.21",
+    "mysql2": "^2.3.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.19.3",
@@ -22,7 +31,9 @@
     "@swc/core": "^1.3.23",
     "@swc/jest": "^0.2.24",
     "@types/express": "^4.17.15",
+    "@types/humps": "^2.0.2",
     "@types/jest": "^29.2.4",
+    "@types/lodash": "^4.14.191",
     "@types/node": "^18.11.15",
     "babel-jest": "^29.3.1",
     "babel-plugin-module-resolver": "^4.1.0",
@@ -36,6 +47,7 @@
     "eslint-plugin-jsx-a11y": "^6.6.1",
     "eslint-plugin-prettier": "^4.2.1",
     "jest": "^29.3.1",
+    "knex-mock-client": "^1.11.0",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",

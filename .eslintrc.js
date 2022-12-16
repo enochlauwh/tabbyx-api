@@ -32,6 +32,7 @@ module.exports = {
           ['@data-access', './src/data-access'],
           ['@graphql', './src/graphql'],
           ['@generated', './src/generated'],
+          ['@models', './src/models'],
           ['@services', './src/services'],
         ],
         extensions: ['.ts', '.js', '.jsx', '.json'],
