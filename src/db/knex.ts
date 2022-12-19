@@ -5,4 +5,5 @@ dotenv.config();
 
 export const knexConfig = config;
 
+// @ts-ignore
 export default knex(knexConfig);

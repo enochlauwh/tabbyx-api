@@ -1,0 +1,22 @@
+overwrite: true
+schema: 'src/graphql/modules/**/*.ts'
+documents: null
+generates:
+  src/generated/graphql-types.ts:
+    config:
+      useIndexSignature: true
+    plugins:
+      - 'typescript'
+      - 'typescript-resolvers'
+      - add:
+          content:
+            - '/* NOTE: THIS IS AN AUTO-GENERATED FILE. DO NOT MODIFY IT DIRECTLY. */'
+            - '/* eslint-disable import/no-unresolved */'
+            - /* eslint-disable @typescript-eslint/ban-types */
+            - /* eslint-disable @typescript-eslint/no-explicit-any */
+            - '// @ts-nocheck'
+
+config:
+  scalars:
+    DateTime: string
+    Date: string
