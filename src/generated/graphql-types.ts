@@ -9,6 +9,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -19,9 +20,46 @@ export type Scalars = {
   DateTime: string;
 };
 
+export type AvailableHoursInput = {
+  day: Scalars['Int'];
+  month: Scalars['Int'];
+  year: Scalars['Int'];
+};
+
 export type Booking = {
   __typename?: 'Booking';
+  cancelledAt?: Maybe<Scalars['DateTime']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  createdBy?: Maybe<User>;
+  endDate?: Maybe<Scalars['DateTime']>;
   id?: Maybe<Scalars['ID']>;
+  startDate?: Maybe<Scalars['DateTime']>;
+};
+
+export type Query = {
+  __typename?: 'Query';
+  /** Returns a list of available hours for a given day (9am to 6pm) as integers */
+  availableHours: Array<Scalars['Int']>;
+  /** Returns the bookings for a given user by email */
+  bookings: Array<Maybe<Booking>>;
+  hello?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryAvailableHoursArgs = {
+  input: AvailableHoursInput;
+};
+
+
+export type QueryBookingsArgs = {
+  email: Scalars['String'];
+};
+
+export type User = {
+  __typename?: 'User';
+  email?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['ID']>;
+  name?: Maybe<Scalars['String']>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -94,24 +132,37 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
+  AvailableHoursInput: AvailableHoursInput;
   Booking: ResolverTypeWrapper<Booking>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
+  Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  User: ResolverTypeWrapper<User>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
+  AvailableHoursInput: AvailableHoursInput;
   Booking: Booking;
   Boolean: Scalars['Boolean'];
   DateTime: Scalars['DateTime'];
   ID: Scalars['ID'];
+  Int: Scalars['Int'];
+  Query: {};
   String: Scalars['String'];
+  User: User;
 }>;
 
 export type BookingResolvers<ContextType = any, ParentType extends ResolversParentTypes['Booking'] = ResolversParentTypes['Booking']> = ResolversObject<{
+  cancelledAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  endDate?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  startDate?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -119,8 +170,23 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
   name: 'DateTime';
 }
 
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  availableHours?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryAvailableHoursArgs, 'input'>>;
+  bookings?: Resolver<Array<Maybe<ResolversTypes['Booking']>>, ParentType, ContextType, RequireFields<QueryBookingsArgs, 'email'>>;
+  hello?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+}>;
+
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type Resolvers<ContextType = any> = ResolversObject<{
   Booking?: BookingResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
+  Query?: QueryResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
 }>;
 

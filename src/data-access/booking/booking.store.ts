@@ -22,9 +22,19 @@ const getBookingById = async (id: BookingId) => {
   }
 };
 
-const listBookings = async () => {
+const listBookings = async (input?: { startDate: string; endDate: string }) => {
   try {
-    const res = await knex.from(TableNames.BOOKINGS).select();
+    const { startDate, endDate } = input || {};
+    const res = await knex
+      .from(TableNames.BOOKINGS)
+      .where((builder) => {
+        if (startDate && endDate) {
+          builder
+            .where('start_date', '>=', startDate)
+            .andWhere('end_date', '<=', endDate);
+        }
+      })
+      .select();
 
     return camelize(res);
   } catch (error) {
@@ -36,7 +46,7 @@ const getBookingsForUserId = async (userId: UserId) => {
   try {
     const res = await knex
       .from(TableNames.BOOKINGS)
-      .where('created_by', userId)
+      .where({ created_by: userId, deleted_at: null })
       .select();
     return camelize(res);
   } catch (error) {

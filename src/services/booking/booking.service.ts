@@ -1,6 +1,9 @@
 import { customAlphabet } from 'nanoid';
+import dayjs from 'dayjs';
 
 import { BookingStore, UserStore } from '@data-access';
+import { UserId } from '@models/user.model';
+import { BookingModel } from '@models/booking.model';
 
 const GEN_RETRY_LIMIT = 5;
 
@@ -87,6 +90,54 @@ const makeBooking = async (input: {
   }
 };
 
+const getBookingsForUserId = async (userId: UserId) => {
+  try {
+    const res = await BookingStore.getBookingsForUserId(userId);
+    return res;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
+
+const getAvailableHours = async (input: {
+  year: number;
+  month: number;
+  day: number;
+}) => {
+  try {
+    const selectedDay = dayjs()
+      .year(input.year)
+      .month(input.month)
+      .date(input.day);
+
+    const currentBookings = (await BookingStore.listBookings({
+      startDate: selectedDay.startOf('day').toISOString(),
+      endDate: selectedDay.endOf('day').toISOString(),
+    })) as BookingModel[];
+
+    // find which hours are not booked
+    const availableHours = [];
+    for (let i = 9; i <= 18; i++) {
+      // from 9am to 6pm
+      const hour = i;
+      const foundBooking = currentBookings.find((booking) => {
+        const bookingStart = dayjs(booking.startDate);
+        const bookingEnd = dayjs(booking.endDate);
+
+        return bookingStart.hour() <= hour && bookingEnd.hour() > hour;
+      });
+
+      if (!foundBooking) {
+        availableHours.push(hour);
+      }
+    }
+
+    return availableHours;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
+
 // this manner of export is necessary to allow for mocking functions within the same module
 const exportFunctions = {
   getBooking,
@@ -94,6 +145,8 @@ const exportFunctions = {
   makeBooking,
   generateIdString,
   generateUniqueBookingId,
+  getBookingsForUserId,
+  getAvailableHours,
 };
 
 export default exportFunctions;

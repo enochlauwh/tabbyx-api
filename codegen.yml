@@ -5,6 +5,8 @@ generates:
   src/generated/graphql-types.ts:
     config:
       useIndexSignature: true
+    mappers:
+      Booking: '..//models/booking.model#BookingModel'
     plugins:
       - 'typescript'
       - 'typescript-resolvers'

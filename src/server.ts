@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import { ApolloServer } from 'apollo-server-express';
 import schema from './graphql/schemasMap';
 
+import './setup';
+
 dotenv.config();
 
 const app = express();

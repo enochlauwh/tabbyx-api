@@ -4,4 +4,5 @@ export type BookingModel = {
   startDate: string;
   endDate: string;
   createdAt: string;
+  cancelledAt: string | null;
 };

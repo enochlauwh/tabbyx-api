@@ -26,6 +26,7 @@
     "graphql-import-node": "^0.0.5",
     "graphql-scalars": "^1.20.1",
     "humps": "^2.0.1",
+    "joi": "^17.7.0",
     "knex": "^2.3.0",
     "lodash": "^4.17.21",
     "mysql2": "^2.3.3",

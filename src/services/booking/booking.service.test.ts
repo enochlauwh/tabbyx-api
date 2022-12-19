@@ -186,4 +186,39 @@ describe('booking.service', () => {
       spy.mockRestore();
     });
   });
+
+  describe('getAvailableHours', () => {
+    test('it should list hours from 9am to 6pm that have no bookings for a given date', async () => {
+      const mockDate = {
+        year: 2022,
+        month: 12,
+        day: 14,
+      };
+
+      const mockBookings = [
+        {
+          id: 'abcd123',
+          startDate: '2022-12-14 13:00:00',
+          endDate: '2022-12-14 14:00:00',
+          createdAt: '2022-12-14 07:42:37',
+          createdBy: 98,
+        },
+        {
+          id: 'abcd123',
+          startDate: '2022-12-14 10:00:00',
+          endDate: '2022-12-14 11:00:00',
+          createdAt: '2022-12-14 07:42:37',
+          createdBy: 99,
+        },
+      ];
+
+      const mockAvailableHours = [9, 11, 12, 14, 15, 16, 17, 18];
+
+      (BookingStore.listBookings as jest.Mock).mockResolvedValue(mockBookings);
+
+      const res = await BookingService.getAvailableHours(mockDate);
+
+      expect(res).toEqual(mockAvailableHours);
+    });
+  });
 });
