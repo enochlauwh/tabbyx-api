@@ -24,8 +24,16 @@ export const schema = gql`
     day: Int!
   }
 
+  input MakeBookingInput {
+    year: Int!
+    month: Int!
+    day: Int!
+    hour: Int!
+    name: String!
+    email: String!
+  }
+
   extend type Query {
-    hello: String
     """
     Returns the bookings for a given user by email
     """
@@ -34,5 +42,9 @@ export const schema = gql`
     Returns a list of available hours for a given day (9am to 6pm) as integers
     """
     availableHours(input: AvailableHoursInput!): [Int!]!
+  }
+
+  extend type Mutation {
+    makeBooking(input: MakeBookingInput!): Booking!
   }
 `;

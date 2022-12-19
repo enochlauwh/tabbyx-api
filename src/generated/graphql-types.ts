@@ -4,6 +4,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // @ts-nocheck
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+import { BookingModel } from '../graphql/models/booking.model';
+import { UserModel } from '../graphql/models/user.model';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -36,13 +38,31 @@ export type Booking = {
   startDate?: Maybe<Scalars['DateTime']>;
 };
 
+export type MakeBookingInput = {
+  day: Scalars['Int'];
+  email: Scalars['String'];
+  hour: Scalars['Int'];
+  month: Scalars['Int'];
+  name: Scalars['String'];
+  year: Scalars['Int'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  makeBooking: Booking;
+};
+
+
+export type MutationMakeBookingArgs = {
+  input: MakeBookingInput;
+};
+
 export type Query = {
   __typename?: 'Query';
   /** Returns a list of available hours for a given day (9am to 6pm) as integers */
   availableHours: Array<Scalars['Int']>;
   /** Returns the bookings for a given user by email */
   bookings: Array<Maybe<Booking>>;
-  hello?: Maybe<Scalars['String']>;
 };
 
 
@@ -133,27 +153,31 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   AvailableHoursInput: AvailableHoursInput;
-  Booking: ResolverTypeWrapper<Booking>;
+  Booking: ResolverTypeWrapper<BookingModel>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
+  MakeBookingInput: MakeBookingInput;
+  Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
-  User: ResolverTypeWrapper<User>;
+  User: ResolverTypeWrapper<UserModel>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   AvailableHoursInput: AvailableHoursInput;
-  Booking: Booking;
+  Booking: BookingModel;
   Boolean: Scalars['Boolean'];
   DateTime: Scalars['DateTime'];
   ID: Scalars['ID'];
   Int: Scalars['Int'];
+  MakeBookingInput: MakeBookingInput;
+  Mutation: {};
   Query: {};
   String: Scalars['String'];
-  User: User;
+  User: UserModel;
 }>;
 
 export type BookingResolvers<ContextType = any, ParentType extends ResolversParentTypes['Booking'] = ResolversParentTypes['Booking']> = ResolversObject<{
@@ -170,10 +194,13 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
   name: 'DateTime';
 }
 
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
+  makeBooking?: Resolver<ResolversTypes['Booking'], ParentType, ContextType, RequireFields<MutationMakeBookingArgs, 'input'>>;
+}>;
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   availableHours?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryAvailableHoursArgs, 'input'>>;
   bookings?: Resolver<Array<Maybe<ResolversTypes['Booking']>>, ParentType, ContextType, RequireFields<QueryBookingsArgs, 'email'>>;
-  hello?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
 }>;
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
@@ -186,6 +213,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 export type Resolvers<ContextType = any> = ResolversObject<{
   Booking?: BookingResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
+  Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 }>;

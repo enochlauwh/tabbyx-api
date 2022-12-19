@@ -27,7 +27,7 @@ describe('user.store', () => {
         name: 'Ginger Root',
         email: 'loretta@ginger.root',
       };
-      tracker.on.select(TableNames.USERS).response(mockDbResponse);
+      tracker.on.select(TableNames.USERS).response([mockDbResponse]);
 
       const res = await UserStore.getUserByEmail(mockDbResponse.email);
 
@@ -37,7 +37,7 @@ describe('user.store', () => {
 
       expect(selectHistory).toHaveLength(1);
       expect(selectHistory[0].method).toEqual('select');
-      expect(selectHistory[0].bindings).toEqual([mockDbResponse.email, 1]);
+      expect(selectHistory[0].bindings).toEqual([mockDbResponse.email]);
 
       expect(res).toEqual(expectedResult);
     });

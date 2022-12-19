@@ -46,7 +46,7 @@ const getBookingsForUserId = async (userId: UserId) => {
   try {
     const res = await knex
       .from(TableNames.BOOKINGS)
-      .where({ created_by: userId, deleted_at: null })
+      .where({ created_by: userId, cancelled_at: null })
       .select();
     return camelize(res);
   } catch (error) {
@@ -71,12 +71,9 @@ const createBooking = async (input: {
       created_at: knex.fn.now(),
     });
 
-    const res = await knex
-      .from(TableNames.BOOKINGS)
-      .where('id', _.head(insertRes))
-      .select();
+    const res = await knex.from(TableNames.BOOKINGS).where('id', id).select();
 
-    return camelize(res);
+    return camelize(_.head(res));
   } catch (error) {
     return Promise.reject(error);
   }

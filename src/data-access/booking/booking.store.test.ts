@@ -132,7 +132,7 @@ describe('booking.store', () => {
         created_by: 78,
       };
 
-      tracker.on.select(TableNames.BOOKINGS).response(mockDbResponse);
+      tracker.on.select(TableNames.BOOKINGS).response([mockDbResponse]);
       tracker.on.insert(TableNames.BOOKINGS).response([mockDbResponse.id]);
 
       const res = await BookingStore.createBooking(mockInput);

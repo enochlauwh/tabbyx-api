@@ -144,17 +144,18 @@ describe('booking.service', () => {
   describe('makeBooking', () => {
     test('it should create a booking', async () => {
       const mockInput = {
-        startDate: '2022-12-14 07:42:37',
-        endDate: '2022-12-14 08:42:37',
+        year: 2022,
+        month: 12,
+        day: 14,
+        hour: 12,
         email: 'loretta@ginger.root',
+        name: 'Loretta',
       };
-
       const mockUser = {
         id: 98,
         email: 'loretta@ginger.root',
         name: 'Loretta',
       };
-
       const mockBooking = {
         id: 'abcd123',
         startDate: '2022-12-14 07:42:37',
@@ -162,28 +163,66 @@ describe('booking.service', () => {
         createdAt: '2022-12-14 07:42:37',
         createdBy: 98,
       };
-
       const generatedId = 'tect382';
-
       const spy = jest
         .spyOn(BookingService, 'generateUniqueBookingId')
         .mockResolvedValue(generatedId);
-
+      const hoursSpy = jest
+        .spyOn(BookingService, 'getAvailableHours')
+        .mockResolvedValue([9, 10, 11, 12, 13, 14, 15, 16, 17]);
       (BookingStore.createBooking as jest.Mock).mockResolvedValue(mockBooking);
       (UserStore.getUserByEmail as jest.Mock).mockResolvedValue(mockUser);
 
       const res = await BookingService.makeBooking(mockInput);
-
       expect(BookingStore.createBooking).toHaveBeenCalledWith({
         id: generatedId,
-        startDate: mockInput.startDate,
-        endDate: mockInput.endDate,
+        startDate: '2022-12-14 12:00:00',
+        endDate: '2022-12-14 13:00:00',
         createdBy: mockUser.id,
       });
-
       expect(res).toEqual(mockBooking);
+      spy.mockRestore();
+      hoursSpy.mockRestore();
+    });
+    test('it should reject if the hour is not available', async () => {
+      const mockInput = {
+        year: 2022,
+        month: 12,
+        day: 14,
+        hour: 12,
+        email: 'loretta@ginger.root',
+        name: 'Loretta',
+      };
+      const mockUser = {
+        id: 98,
+        email: 'loretta@ginger.root',
+        name: 'Loretta',
+      };
+      const mockBooking = {
+        id: 'abcd123',
+        startDate: '2022-12-14 12:42:37',
+        endDate: '2022-12-14 12:42:37',
+        createdAt: '2022-12-14 12:42:37',
+        createdBy: 98,
+      };
+      const generatedId = 'tect382';
+      const spy = jest
+        .spyOn(BookingService, 'generateUniqueBookingId')
+        .mockResolvedValue(generatedId);
+      const hoursSpy = jest
+        .spyOn(BookingService, 'getAvailableHours')
+        .mockResolvedValue([9, 10, 11, 13, 14, 15, 16, 17]);
+      (BookingStore.createBooking as jest.Mock).mockResolvedValue(mockBooking);
+      (UserStore.getUserByEmail as jest.Mock).mockResolvedValue(mockUser);
+
+      try {
+        const res = await BookingService.makeBooking(mockInput);
+      } catch (error) {
+        expect(error).toContain('Selected hour is not available');
+      }
 
       spy.mockRestore();
+      hoursSpy.mockRestore();
     });
   });
 
@@ -212,7 +251,7 @@ describe('booking.service', () => {
         },
       ];
 
-      const mockAvailableHours = [9, 11, 12, 14, 15, 16, 17, 18];
+      const mockAvailableHours = [9, 11, 12, 14, 15, 16, 17];
 
       (BookingStore.listBookings as jest.Mock).mockResolvedValue(mockBookings);
 

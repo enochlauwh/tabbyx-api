@@ -63,17 +63,52 @@ const generateUniqueBookingId = async (
 };
 
 const makeBooking = async (input: {
+  name: string;
   email: string;
-  startDate: string;
-  endDate: string;
+  day: number;
+  month: number;
+  year: number;
+  hour: number;
 }) => {
   try {
-    const { email, startDate, endDate } = input;
+    const { name, email, day, month, year, hour } = input;
 
-    const user = await UserStore.getUserByEmail(email);
-    if (!user) {
-      throw new Error('User not found');
+    const availableHours = await exportFunctions.getAvailableHours({
+      day,
+      month,
+      year,
+    });
+
+    if (!availableHours.includes(hour)) {
+      return Promise.reject('Selected hour is not available');
     }
+
+    let user = await UserStore.getUserByEmail(email);
+    if (!user) {
+      user = await UserStore.createUser({
+        name,
+        email,
+      });
+    }
+
+    const startDate = dayjs()
+      .year(year)
+      .month(month - 1)
+      .date(day)
+      .hour(hour)
+      .minute(0)
+      .second(0)
+
+      .format('YYYY-MM-DD HH:mm:ss');
+    const endDate = dayjs()
+      .year(year)
+      .month(month - 1)
+      .date(day)
+      .hour(hour)
+      .minute(0)
+      .second(0)
+      .add(1, 'hour')
+      .format('YYYY-MM-DD HH:mm:ss');
 
     const generatedId = await exportFunctions.generateUniqueBookingId();
 
@@ -107,18 +142,18 @@ const getAvailableHours = async (input: {
   try {
     const selectedDay = dayjs()
       .year(input.year)
-      .month(input.month)
+      .month(input.month - 1)
       .date(input.day);
 
     const currentBookings = (await BookingStore.listBookings({
-      startDate: selectedDay.startOf('day').toISOString(),
-      endDate: selectedDay.endOf('day').toISOString(),
+      startDate: selectedDay.startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+      endDate: selectedDay.endOf('day').format('YYYY-MM-DD HH:mm:ss'),
     })) as BookingModel[];
 
     // find which hours are not booked
     const availableHours = [];
-    for (let i = 9; i <= 18; i++) {
-      // from 9am to 6pm
+    for (let i = 9; i <= 17; i++) {
+      // from 9am to 5pm (because 1 hour slot ends at 6pm)
       const hour = i;
       const foundBooking = currentBookings.find((booking) => {
         const bookingStart = dayjs(booking.startDate);
