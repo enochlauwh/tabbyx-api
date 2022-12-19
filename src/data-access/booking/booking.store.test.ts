@@ -46,6 +46,75 @@ describe('booking.store', () => {
     });
   });
 
+  describe('listBookings', () => {
+    test('it should list bookings', async () => {
+      const mockDbResponse = [
+        {
+          id: 'abcd123',
+          start_date: '2022-12-14 07:42:37',
+          end_date: '2022-12-14 08:42:37',
+          created_at: '2022-12-14 07:42:37',
+          created_by: 98,
+        },
+        {
+          id: 'echp289',
+          start_date: '2022-12-14 07:42:37',
+          end_date: '2022-12-14 08:42:37',
+          created_at: '2022-12-14 07:42:37',
+          created_by: 98,
+        },
+      ];
+
+      tracker.on.select(TableNames.BOOKINGS).response(mockDbResponse);
+
+      const res = await BookingStore.listBookings();
+
+      const selectHistory = tracker.history.select;
+
+      const expectedResult = camelize(mockDbResponse);
+
+      expect(selectHistory).toHaveLength(1);
+      expect(selectHistory[0].method).toEqual('select');
+
+      expect(res).toEqual(expectedResult);
+    });
+  });
+
+  describe('getBookingsForUserId', () => {
+    test('it should list bookings for a user id', async () => {
+      const mockDbResponse = [
+        {
+          id: 'abcd123',
+          start_date: '2022-12-14 07:42:37',
+          end_date: '2022-12-14 08:42:37',
+          created_at: '2022-12-14 07:42:37',
+          created_by: 98,
+        },
+        {
+          id: 'echp289',
+          start_date: '2022-12-14 07:42:37',
+          end_date: '2022-12-14 08:42:37',
+          created_at: '2022-12-14 07:42:37',
+          created_by: 98,
+        },
+      ];
+
+      tracker.on.select(TableNames.BOOKINGS).response(mockDbResponse);
+
+      const res = await BookingStore.getBookingsForUserId(98);
+
+      const selectHistory = tracker.history.select;
+
+      const expectedResult = camelize(mockDbResponse);
+
+      expect(selectHistory).toHaveLength(1);
+      expect(selectHistory[0].method).toEqual('select');
+      expect(selectHistory[0].bindings).toEqual([98]);
+
+      expect(res).toEqual(expectedResult);
+    });
+  });
+
   describe('createBooking', () => {
     test('it should create a new booking', async () => {
       const mockInput = {

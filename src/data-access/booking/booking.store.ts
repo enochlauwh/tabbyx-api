@@ -22,6 +22,28 @@ const getBookingById = async (id: BookingId) => {
   }
 };
 
+const listBookings = async () => {
+  try {
+    const res = await knex.from(TableNames.BOOKINGS).select();
+
+    return camelize(res);
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
+
+const getBookingsForUserId = async (userId: UserId) => {
+  try {
+    const res = await knex
+      .from(TableNames.BOOKINGS)
+      .where('created_by', userId)
+      .select();
+    return camelize(res);
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
+
 const createBooking = async (input: {
   id: string;
   startDate: string;
@@ -52,5 +74,7 @@ const createBooking = async (input: {
 
 export default {
   getBookingById,
+  getBookingsForUserId,
   createBooking,
+  listBookings,
 };
