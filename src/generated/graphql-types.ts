@@ -49,7 +49,13 @@ export type MakeBookingInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  cancelBooking: Scalars['Boolean'];
   makeBooking: Booking;
+};
+
+
+export type MutationCancelBookingArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -62,7 +68,7 @@ export type Query = {
   /** Returns a list of available hours for a given day (9am to 6pm) as integers */
   availableHours: Array<Scalars['Int']>;
   /** Returns the bookings for a given user by email */
-  bookings: Array<Maybe<Booking>>;
+  bookings: Array<Booking>;
 };
 
 
@@ -195,12 +201,13 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 }
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
+  cancelBooking?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationCancelBookingArgs, 'id'>>;
   makeBooking?: Resolver<ResolversTypes['Booking'], ParentType, ContextType, RequireFields<MutationMakeBookingArgs, 'input'>>;
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   availableHours?: Resolver<Array<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryAvailableHoursArgs, 'input'>>;
-  bookings?: Resolver<Array<Maybe<ResolversTypes['Booking']>>, ParentType, ContextType, RequireFields<QueryBookingsArgs, 'email'>>;
+  bookings?: Resolver<Array<ResolversTypes['Booking']>, ParentType, ContextType, RequireFields<QueryBookingsArgs, 'email'>>;
 }>;
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{

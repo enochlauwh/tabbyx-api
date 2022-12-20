@@ -91,5 +91,18 @@ export const resolvers: Resolvers = {
         throw new ApolloError(error as string);
       }
     },
+    cancelBooking: async (root, { id }) => {
+      try {
+        const booking = await BookingService.getBooking(id);
+        if (!booking) {
+          throw new UserInputError('Booking not found');
+        }
+
+        const affectedRows = await BookingService.cancelBooking(id);
+        return affectedRows > 0;
+      } catch (error) {
+        throw new ApolloError(error as string);
+      }
+    },
   },
 };

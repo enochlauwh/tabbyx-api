@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 
 import { BookingStore, UserStore } from '@data-access';
 import { UserId } from '@models/user.model';
-import { BookingModel } from '@models/booking.model';
+import { BookingId, BookingModel } from '@models/booking.model';
 
 const GEN_RETRY_LIMIT = 5;
 
@@ -173,6 +173,15 @@ const getAvailableHours = async (input: {
   }
 };
 
+const cancelBooking = async (id: BookingId) => {
+  try {
+    const res = await BookingStore.cancelBooking(id);
+    return res;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
+
 // this manner of export is necessary to allow for mocking functions within the same module
 const exportFunctions = {
   getBooking,
@@ -182,6 +191,7 @@ const exportFunctions = {
   generateUniqueBookingId,
   getBookingsForUserId,
   getAvailableHours,
+  cancelBooking,
 };
 
 export default exportFunctions;

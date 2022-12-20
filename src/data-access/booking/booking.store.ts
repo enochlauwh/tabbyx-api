@@ -79,9 +79,22 @@ const createBooking = async (input: {
   }
 };
 
+const cancelBooking = async (id: BookingId) => {
+  try {
+    const updateRes = await knex(TableNames.BOOKINGS).where('id', id).update({
+      cancelled_at: knex.fn.now(),
+    });
+
+    return updateRes;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
+
 export default {
   getBookingById,
   getBookingsForUserId,
   createBooking,
   listBookings,
+  cancelBooking,
 };

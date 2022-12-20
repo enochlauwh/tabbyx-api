@@ -37,7 +37,8 @@ export const schema = gql`
     """
     Returns the bookings for a given user by email
     """
-    bookings(email: String!): [Booking]!
+    bookings(email: String!): [Booking!]!
+
     """
     Returns a list of available hours for a given day (9am to 6pm) as integers
     """
@@ -46,5 +47,6 @@ export const schema = gql`
 
   extend type Mutation {
     makeBooking(input: MakeBookingInput!): Booking!
+    cancelBooking(id: ID!): Boolean!
   }
 `;
