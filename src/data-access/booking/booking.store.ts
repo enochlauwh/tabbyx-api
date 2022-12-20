@@ -31,7 +31,8 @@ const listBookings = async (input?: { startDate: string; endDate: string }) => {
         if (startDate && endDate) {
           builder
             .where('start_date', '>=', startDate)
-            .andWhere('end_date', '<=', endDate);
+            .andWhere('end_date', '<=', endDate)
+            .andWhere('cancelled_at', null);
         }
       })
       .select();
