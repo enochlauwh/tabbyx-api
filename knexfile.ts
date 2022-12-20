@@ -17,7 +17,7 @@ const environments = {
   },
   migrations: {
     directory: './src/db/migrations',
-    tableName: 'knex_migrations',
+    tableName: 'tabby_migrations',
   },
 };
 
