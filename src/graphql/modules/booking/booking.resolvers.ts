@@ -10,10 +10,9 @@ import dayjs from 'dayjs';
 export const resolvers: Resolvers = {
   Booking: {
     startDate: ({ startDate }) =>
-      dayjs.tz(startDate, 'Asia/Kuala_Lumpur').format('YYYY-MM-DD HH:mm:ss'),
+      dayjs.tz(startDate).format('YYYY-MM-DD HH:mm:ss'),
 
-    endDate: ({ endDate }) =>
-      dayjs.tz(endDate, 'Asia/Kuala_Lumpur').format('YYYY-MM-DD HH:mm:ss'),
+    endDate: ({ endDate }) => dayjs.tz(endDate).format('YYYY-MM-DD HH:mm:ss'),
     createdBy: async ({ createdBy }) => {
       if (createdBy) {
         const user = await UserStore.getUserById(createdBy);
